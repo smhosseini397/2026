@@ -1,0 +1,6 @@
+{
+  "name": "ستاره طلایی - امتیاز و پاداش دخترم",
+  "description": "اپلیکیشن ساده و انگیزشی امتیازدهی به کارهای خوب و بد و مدیریت پاداش‌های تشویقی دخترم، قابل نصب روی گوشی‌های سامسونگ و اندروید.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
