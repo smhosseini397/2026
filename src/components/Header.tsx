@@ -1,11 +1,23 @@
 import React from 'react';
-import { Download, Volume2, VolumeX, Shield, ShieldAlert, Edit3, Settings, Palette } from 'lucide-react';
+import {
+  Download,
+  Volume2,
+  VolumeX,
+  Shield,
+  ShieldAlert,
+  Edit3,
+  Settings,
+  Palette,
+  LogOut,
+} from 'lucide-react';
+
 import { ChildProfile, AppSettings } from '../types';
 import { calculateLevel } from '../utils/storage';
 
 interface Props {
   profile: ChildProfile;
   settings: AppSettings;
+  isParentMode: boolean;
   onToggleSound: () => void;
   onToggleParentLock: () => void;
   onOpenEditProfile: () => void;
@@ -17,6 +29,7 @@ interface Props {
 export const Header: React.FC<Props> = ({
   profile,
   settings,
+  isParentMode,
   onToggleSound,
   onToggleParentLock,
   onOpenEditProfile,
@@ -29,30 +42,50 @@ export const Header: React.FC<Props> = ({
   return (
     <header className="bg-white/90 backdrop-blur-md sticky top-0 z-30 border-b border-amber-100 shadow-xs">
       <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-        {/* Profile info: Avatar & Name */}
-        <div 
-          onClick={onOpenEditProfile}
-          className="flex items-center gap-3 cursor-pointer group"
+
+        {/* Profile */}
+        <div
+          onClick={isParentMode ? onOpenEditProfile : undefined}
+          className={`flex items-center gap-3 ${
+            isParentMode ? 'cursor-pointer group' : ''
+          }`}
           id="profile-header-card"
-          title="برای ویرایش مشخصات و آواتار کلیک کنید"
+          title={
+            isParentMode
+              ? 'برای ویرایش مشخصات کلیک کنید'
+              : undefined
+          }
         >
           <div className="relative">
             {profile.frameStyle === 'crown' && (
-              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-sm z-10">👑</span>
-            )}
-            {profile.frameStyle === 'star' && (
-              <span className="absolute -top-1.5 -right-1 text-xs z-10">⭐</span>
-            )}
-            {profile.frameStyle === 'flower' && (
-              <span className="absolute -top-1.5 -right-1 text-xs z-10">🌸</span>
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-sm z-10">
+                👑
+              </span>
             )}
 
-            <div className={`w-12 h-12 rounded-2xl bg-linear-to-tr from-amber-100 to-pink-100 border-2 overflow-hidden flex items-center justify-center text-2xl shadow-xs group-hover:scale-105 transition-transform ${
-              profile.frameStyle === 'crown' ? 'border-amber-400 ring-2 ring-amber-300/30' :
-              profile.frameStyle === 'star' ? 'border-yellow-400 ring-2 ring-yellow-300/30' :
-              profile.frameStyle === 'flower' ? 'border-pink-400 ring-2 ring-pink-300/30' :
-              'border-amber-300'
-            }`}>
+            {profile.frameStyle === 'star' && (
+              <span className="absolute -top-1.5 -right-1 text-xs z-10">
+                ⭐
+              </span>
+            )}
+
+            {profile.frameStyle === 'flower' && (
+              <span className="absolute -top-1.5 -right-1 text-xs z-10">
+                🌸
+              </span>
+            )}
+
+            <div
+              className={`w-12 h-12 rounded-2xl bg-linear-to-tr from-amber-100 to-pink-100 border-2 overflow-hidden flex items-center justify-center text-2xl shadow-xs ${
+                profile.frameStyle === 'crown'
+                  ? 'border-amber-400 ring-2 ring-amber-300/30'
+                  : profile.frameStyle === 'star'
+                  ? 'border-yellow-400 ring-2 ring-yellow-300/30'
+                  : profile.frameStyle === 'flower'
+                  ? 'border-pink-400 ring-2 ring-pink-300/30'
+                  : 'border-amber-300'
+              }`}
+            >
               {profile.photoUrl ? (
                 <img
                   src={profile.photoUrl}
@@ -63,48 +96,56 @@ export const Header: React.FC<Props> = ({
                 profile.avatar
               )}
             </div>
+
             <span className="absolute -bottom-1 -left-1 w-5 h-5 rounded-full bg-amber-400 text-slate-900 text-xs flex items-center justify-center shadow-xs">
               {level.badge}
             </span>
           </div>
+
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-slate-800 text-base group-hover:text-pink-600 transition-colors">
+              <span className="font-extrabold text-slate-800 text-base">
                 {profile.name}
               </span>
-              <Edit3 className="w-3.5 h-3.5 text-slate-400 group-hover:text-pink-500 transition-colors" />
+
+              {isParentMode && (
+                <Edit3 className="w-3.5 h-3.5 text-slate-400" />
+              )}
             </div>
+
             <span className="text-[11px] font-semibold text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
               {profile.title || level.title}
             </span>
           </div>
         </div>
 
-        {/* Action Controls */}
+        {/* Controls */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Theme customizer button */}
-          <button
-            onClick={onOpenThemeModal}
-            className="p-2 rounded-xl border border-pink-200 bg-pink-50 text-pink-700 hover:bg-pink-100 transition"
-            id="open-theme-customizer-btn"
-            title="تغییر تم رنگی برنامه"
-          >
-            <Palette className="w-4 h-4" />
-          </button>
 
-          {/* Install on phone button */}
+          {/* Parent-only theme */}
+          {isParentMode && (
+            <button
+              onClick={onOpenThemeModal}
+              className="p-2 rounded-xl border border-pink-200 bg-pink-50 text-pink-700 hover:bg-pink-100 transition"
+              id="open-theme-customizer-btn"
+              title="تغییر تم رنگی برنامه"
+            >
+              <Palette className="w-4 h-4" />
+            </button>
+          )}
+
+          {/* Install */}
           <button
             onClick={onOpenInstallModal}
             className="flex items-center gap-1 bg-linear-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold py-1.5 px-2.5 sm:px-3 rounded-xl shadow-xs active:scale-95 transition"
             id="open-install-guide-btn"
-            title="نصب روی گوشی سامسونگ یا اندروید"
+            title="نصب روی گوشی"
           >
             <Download className="w-3.5 h-3.5" />
-            <span className="hidden xs:inline">نصب روی گوشی</span>
-            <span className="xs:hidden">نصب</span>
+            <span className="hidden xs:inline">نصب</span>
           </button>
 
-          {/* Sound toggle */}
+          {/* Sound */}
           <button
             onClick={onToggleSound}
             className={`p-2 rounded-xl border transition ${
@@ -113,44 +154,62 @@ export const Header: React.FC<Props> = ({
                 : 'bg-slate-100 border-slate-200 text-slate-400 hover:bg-slate-200'
             }`}
             id="toggle-sound-btn"
-            title={settings.soundEnabled ? 'صدا روشن است' : 'صدا خاموش است'}
+            title={
+              settings.soundEnabled
+                ? 'صدا روشن است'
+                : 'صدا خاموش است'
+            }
           >
-            {settings.soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            {settings.soundEnabled ? (
+              <Volume2 className="w-4 h-4" />
+            ) : (
+              <VolumeX className="w-4 h-4" />
+            )}
           </button>
 
-          {/* Parent Lock toggle */}
+          {/* Parent mode */}
           <button
             onClick={onToggleParentLock}
             className={`p-2 rounded-xl border transition flex items-center gap-1 text-xs font-semibold ${
-              settings.isParentLocked
+              isParentMode
                 ? 'bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100'
                 : 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'
             }`}
             id="toggle-parent-lock-btn"
-            title={settings.isParentLocked ? 'حالت والدین قفل است (برای محافظت از دستکاری)' : 'حالت والدین فعال است (امکان ویرایش و حذف)'}
+            title={
+              isParentMode
+                ? 'خروج از حالت والدین'
+                : 'ورود به بخش والدین'
+            }
           >
-            {settings.isParentLocked ? (
+            {isParentMode ? (
               <>
-                <ShieldAlert className="w-4 h-4" />
-                <span className="hidden sm:inline">قفل کودک</span>
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">
+                  خروج والدین
+                </span>
               </>
             ) : (
               <>
                 <Shield className="w-4 h-4" />
-                <span className="hidden sm:inline">والدین</span>
+                <span className="hidden sm:inline">
+                  والدین
+                </span>
               </>
             )}
           </button>
 
-          {/* Backup / Settings modal */}
-          <button
-            onClick={onOpenSettings}
-            className="p-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition"
-            id="open-settings-modal-btn"
-            title="پشتیبان‌گیری و تنظیمات"
-          >
-            <Settings className="w-4 h-4" />
-          </button>
+          {/* Parent settings */}
+          {isParentMode && (
+            <button
+              onClick={onOpenSettings}
+              className="p-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition"
+              id="open-settings-modal-btn"
+              title="پشتیبان‌گیری و تنظیمات"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>
