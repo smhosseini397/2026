@@ -26,9 +26,15 @@ jobs:
       - name: Build web app
         run: npm run build
 
-      - name: Initialize Capacitor
+      - name: Create Capacitor config
         run: |
-          npx cap init "2026" "com.smhosseini.app" --web-dir dist
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.smhosseini.app",
+            "appName": "2026",
+            "webDir": "dist"
+          }
+          EOF
 
       - name: Add Android
         run: npx cap add android
